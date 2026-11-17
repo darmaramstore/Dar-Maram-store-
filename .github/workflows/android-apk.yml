@@ -4,10 +4,12 @@ on:
   push:
     paths:
       - "dar-maram-app-public.zip"
+      - "android-app/**"
       - ".github/workflows/android-apk.yml"
   pull_request:
     paths:
       - "dar-maram-app-public.zip"
+      - "android-app/**"
       - ".github/workflows/android-apk.yml"
   workflow_dispatch:
 
