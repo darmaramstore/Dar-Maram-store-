@@ -5,28 +5,28 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.webkit.CookieManager
+import android.webkit.SslErrorHandler
 import android.webkit.WebResourceRequest
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.webkit.WebSettings
-import android.webkit.SslErrorHandler
 import android.net.http.SslError
 
 class MainActivity : Activity() {
     private lateinit var webView: WebView
-    private val storeUrl = "https://darmaramstore.wordpress.com/"
+    private val localStoreUrl = "file:///android_asset/index.html"
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         webView = WebView(this).apply {
             setBackgroundColor(android.graphics.Color.rgb(18, 18, 18))
             settings.apply {
                 javaScriptEnabled = true
                 domStorageEnabled = true
                 databaseEnabled = false
-                allowFileAccess = false
+                allowFileAccess = true
                 allowContentAccess = false
                 allowFileAccessFromFileURLs = false
                 allowUniversalAccessFromFileURLs = false
@@ -55,26 +55,22 @@ class MainActivity : Activity() {
             }
         }
 
-        CookieManager.getInstance().apply {
-            setAcceptCookie(true)
-            setAcceptThirdPartyCookies(webView, false)
-        }
         setContentView(webView)
         if (savedInstanceState == null || webView.restoreState(savedInstanceState) == null) {
-            webView.loadUrl(storeUrl)
+            webView.loadUrl(localStoreUrl)
         }
     }
 
-    // Keep normal web pages inside the store app; send only phone/email/app links outside.
+    // WhatsApp opens in its installed app (or system browser); the optional website stays separate.
     private fun routeUrl(uri: Uri): Boolean {
-        return when (uri.scheme?.lowercase()) {
-            "https", "http" -> false
-            "tel", "mailto", "whatsapp", "sms" -> {
-                runCatching { startActivity(Intent(Intent.ACTION_VIEW, uri)) }
-                true
-            }
-            else -> true
+        val scheme = uri.scheme?.lowercase()
+        val host = uri.host?.lowercase()
+        if (host == "wa.me" || host == "api.whatsapp.com" ||
+            scheme == "tel" || scheme == "mailto" || scheme == "whatsapp" || scheme == "sms") {
+            runCatching { startActivity(Intent(Intent.ACTION_VIEW, uri)) }
+            return true
         }
+        return scheme != "https" && scheme != "http"
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
