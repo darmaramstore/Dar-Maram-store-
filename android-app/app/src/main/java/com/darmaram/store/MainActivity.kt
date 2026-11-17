@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Build
 import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -32,12 +33,17 @@ class MainActivity : Activity() {
                 javaScriptCanOpenWindowsAutomatically = false
                 setSupportMultipleWindows(false)
                 mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
-                safeBrowsingEnabled = true
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    safeBrowsingEnabled = true
+                }
             }
             webViewClient = StoreWebViewClient()
         }
 
-        CookieManager.getInstance().setAcceptThirdPartyCookies(webView, false)
+        CookieManager.getInstance().apply {
+            setAcceptCookie(false)
+            setAcceptThirdPartyCookies(webView, false)
+        }
         setContentView(webView)
         if (savedInstanceState == null) {
             webView.loadUrl(assetHome)
