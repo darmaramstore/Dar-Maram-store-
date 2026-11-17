@@ -6,13 +6,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.webkit.CookieManager
-import android.webkit.SafeBrowsingResponse
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebChromeClient
 
 class MainActivity : Activity() {
     private lateinit var webView: WebView
@@ -23,7 +20,6 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
 
         WebView.setWebContentsDebuggingEnabled(false)
-        CookieManager.getInstance().setAcceptThirdPartyCookies(WebView(this), false)
 
         webView = WebView(this).apply {
             settings.apply {
@@ -41,6 +37,7 @@ class MainActivity : Activity() {
             webViewClient = StoreWebViewClient()
         }
 
+        CookieManager.getInstance().setAcceptThirdPartyCookies(webView, false)
         setContentView(webView)
         if (savedInstanceState == null) {
             webView.loadUrl(assetHome)
