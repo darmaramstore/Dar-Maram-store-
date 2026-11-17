@@ -1,0 +1,1 @@
+Build the approved Dar Maram Android package from dar-maram-app-public.zip using the workflow at .github/workflows/android-apk.yml.
