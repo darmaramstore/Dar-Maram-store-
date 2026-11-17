@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.webkit.CookieManager
-import android.webkit.SafeBrowsingResponse
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -21,9 +20,8 @@ class MainActivity : Activity() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WebView.setWebContentsDebuggingEnabled(false)
-
         webView = WebView(this).apply {
+            setBackgroundColor(android.graphics.Color.rgb(18, 18, 18))
             settings.apply {
                 javaScriptEnabled = true
                 domStorageEnabled = true
@@ -39,7 +37,22 @@ class MainActivity : Activity() {
                     safeBrowsingEnabled = true
                 }
             }
-            webViewClient = StoreWebViewClient()
+            webViewClient = object : WebViewClient() {
+                override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                    val uri = request?.url ?: return true
+                    return routeUrl(uri)
+                }
+
+                @Deprecated("Deprecated in Android API")
+                override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                    val uri = runCatching { Uri.parse(url ?: return true) }.getOrNull() ?: return true
+                    return routeUrl(uri)
+                }
+
+                override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
+                    handler?.cancel()
+                }
+            }
         }
 
         CookieManager.getInstance().apply {
@@ -52,46 +65,20 @@ class MainActivity : Activity() {
         }
     }
 
-    private inner class StoreWebViewClient : WebViewClient() {
-        override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-            val uri = request?.url ?: return true
-            return handleNavigation(uri)
-        }
-
-        @Deprecated("Deprecated in Android API")
-        override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-            val uri = runCatching { Uri.parse(url ?: return true) }.getOrNull() ?: return true
-            return handleNavigation(uri)
-        }
-
-        override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
-            handler?.cancel()
-        }
-
-        private fun handleNavigation(uri: Uri): Boolean {
-            val scheme = uri.scheme?.lowercase()
-            val host = uri.host?.lowercase().orEmpty()
-            if (scheme == "https" && (host == "darmaramstore.wordpress.com" || host == "wordpress.com" || host.endsWith(".wordpress.com"))) {
-                return false
-            }
-            if (scheme == "https" || scheme == "http" || scheme == "whatsapp" || scheme == "tel" || scheme == "mailto") {
-                return openExternal(uri)
-            }
-            return true
-        }
-
-        private fun openExternal(uri: Uri): Boolean {
-            return try {
-                startActivity(Intent(Intent.ACTION_VIEW, uri))
-                true
-            } catch (_: Exception) {
+    // Keep normal web pages inside the store app; send only phone/email/app links outside.
+    private fun routeUrl(uri: Uri): Boolean {
+        return when (uri.scheme?.lowercase()) {
+            "https", "http" -> false
+            "tel", "mailto", "whatsapp", "sms" -> {
+                runCatching { startActivity(Intent(Intent.ACTION_VIEW, uri)) }
                 true
             }
+            else -> true
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        webView.saveState(outState)
+        if (::webView.isInitialized) webView.saveState(outState)
         super.onSaveInstanceState(outState)
     }
 
