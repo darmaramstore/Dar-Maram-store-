@@ -3,12 +3,10 @@ name: Build Dar Maram Android APK
 on:
   push:
     paths:
-      - "dar-maram-app-public.zip"
       - "android-app/**"
       - ".github/workflows/android-apk.yml"
   pull_request:
     paths:
-      - "dar-maram-app-public.zip"
       - "android-app/**"
       - ".github/workflows/android-apk.yml"
   workflow_dispatch:
@@ -31,20 +29,13 @@ jobs:
         uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a
         with:
           gradle-version: "8.9"
-      - name: Extract approved Android app package
-        run: |
-          test -s dar-maram-app-public.zip
-          mkdir -p android-app-build
-          unzip -q dar-maram-app-public.zip -d android-app-build
-          test -f android-app-build/app/src/main/AndroidManifest.xml
-          test -f android-app-build/app/src/main/assets/index.html
       - name: Build debug APK
-        working-directory: android-app-build
+        working-directory: android-app
         run: gradle assembleDebug
       - name: Upload installable APK
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: dar-maram-store-debug-apk
-          path: android-app-build/app/build/outputs/apk/debug/app-debug.apk
+          path: android-app/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
