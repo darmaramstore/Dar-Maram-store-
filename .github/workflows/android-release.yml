@@ -74,3 +74,5 @@ jobs:
       - name: Remove temporary signing key
         if: always()
         run: rm -f "$RUNNER_TEMP/dar-maram-upload-key.jks"
+
+# Trigger a fresh signed-release validation after repository secret setup.
