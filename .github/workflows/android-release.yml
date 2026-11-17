@@ -1,6 +1,9 @@
 name: Build Dar Maram Play Store Bundle
 
 on:
+  push:
+    paths:
+      - ".github/workflows/android-release.yml"
   workflow_dispatch:
 
 permissions:
