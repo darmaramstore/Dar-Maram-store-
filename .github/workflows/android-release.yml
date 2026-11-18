@@ -1,4 +1,4 @@
-name: Build Dar Maram Play Store Bundle
+name: Build Dar Maram Signed Android Release
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
             fi
           done
           if [ "$missing" -ne 0 ]; then
-            echo "Configure the four Android signing secrets in repository Settings > Secrets and variables > Actions."
+            echo "Android signing secrets are not available to this workflow."
             exit 1
           fi
 
@@ -54,16 +54,26 @@ jobs:
           echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/dar-maram-upload-key.jks"
           test -s "$RUNNER_TEMP/dar-maram-upload-key.jks"
 
-      - name: Build signed Play Store AAB
+      - name: Build signed APK and Play Store AAB
         working-directory: android-app
         env:
           ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/dar-maram-upload-key.jks
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: gradle bundleRelease
+        run: |
+          gradle assembleRelease
+          gradle bundleRelease
 
-      - name: Upload signed AAB
+      - name: Upload signed installable APK
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: dar-maram-store-signed-release-apk
+          path: android-app/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload signed Play Store AAB
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: dar-maram-store-play-release-aab
@@ -74,5 +84,3 @@ jobs:
       - name: Remove temporary signing key
         if: always()
         run: rm -f "$RUNNER_TEMP/dar-maram-upload-key.jks"
-
-# Trigger a fresh signed-release validation after repository secret setup.
