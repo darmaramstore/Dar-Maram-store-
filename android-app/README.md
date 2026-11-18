@@ -1,23 +1,22 @@
 # Dar Maram Store — Android
 
-The Android app is a standalone storefront. Its Arabic RTL home screen and interface are bundled locally in `app/src/main/assets/index.html`; it does not load WordPress or require the website to run.
+The Android app opens its bundled Arabic RTL storefront directly from app/src/main/assets/index.html; it does not depend on the WordPress homepage to start. Product photos are loaded from the Dar Maram WordPress media library, so an internet connection is required for those images and for the website/WhatsApp links.
 
-The app and website are separate products. The app includes an optional external link to the website:
-https://darmaram-store.darmaramstore.workers.dev/
+The app and website remain separate products. The app includes a link to the website:
+https://darmaramstore.wordpress.com/
 
-The Android package also registers the optional `darmaram://store` handoff so a website link can open the installed app. The website must add that link separately; it is not automatically modified by this Android repository.
+WhatsApp product orders open WhatsApp with the selected product name in the message. The app has no splash/intro screen.
 
 ## Build
 
-Requires JDK 17 and Gradle 8.9:
+Requires JDK 17, Android SDK platform 35, and Gradle 8.9:
 
-```bash
-gradle assembleDebug
-```
+    cd android-app
+    gradle assembleDebug
 
-APK output: `app/build/outputs/apk/debug/app-debug.apk`.
+APK output: app/build/outputs/apk/debug/app-debug.apk.
 
-GitHub Actions builds the debug APK on pushes, pull requests, and manual workflow dispatch. Download it from the workflow run's Artifacts section.
+GitHub Actions builds a debug APK on pushes, pull requests, and manual workflow dispatch. Download the APK from the workflow run's Artifacts section.
 
 ## Release
 
