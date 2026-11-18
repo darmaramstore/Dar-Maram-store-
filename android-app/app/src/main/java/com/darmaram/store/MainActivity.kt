@@ -26,7 +26,7 @@ class MainActivity : Activity() {
                 javaScriptEnabled = true
                 domStorageEnabled = true
                 databaseEnabled = false
-                allowFileAccess = false
+                allowFileAccess = true
                 allowContentAccess = false
                 allowFileAccessFromFileURLs = false
                 allowUniversalAccessFromFileURLs = false
@@ -61,13 +61,19 @@ class MainActivity : Activity() {
         }
         setContentView(webView)
         if (savedInstanceState == null || webView.restoreState(savedInstanceState) == null) {
-            webView.loadUrl(storeUrl)
+            webView.loadUrl("file:///android_asset/index.html")
         }
     }
 
     // Keep normal web pages inside the store app; send only phone/email/app links outside.
     private fun routeUrl(uri: Uri): Boolean {
-        return when (uri.scheme?.lowercase()) {
+        val scheme = uri.scheme?.lowercase()
+        val host = uri.host?.lowercase()
+        if (scheme == "https" && host in setOf("wa.me", "api.whatsapp.com")) {
+            runCatching { startActivity(Intent(Intent.ACTION_VIEW, uri)) }
+            return true
+        }
+        return when (scheme) {
             "https", "http" -> false
             "tel", "mailto", "whatsapp", "sms" -> {
                 runCatching { startActivity(Intent(Intent.ACTION_VIEW, uri)) }
