@@ -69,7 +69,7 @@ class MainActivity : Activity() {
     private fun routeUrl(uri: Uri): Boolean {
         val scheme = uri.scheme?.lowercase()
         val host = uri.host?.lowercase()
-        if (scheme == "https" && host in setOf("wa.me", "api.whatsapp.com")) {
+        if (scheme == "https" && (host == "wa.me" || host == "api.whatsapp.com")) {
             runCatching { startActivity(Intent(Intent.ACTION_VIEW, uri)) }
             return true
         }
