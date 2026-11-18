@@ -74,5 +74,5 @@ function toast(t){let e=document.getElementById('toast');e.textContent=t;e.style
 function favorite(b){b.textContent=b.textContent==='♡'?'♥':'♡';b.style.color=b.textContent==='♥'?'#b12a28':'#111'}
 function filterProducts(){let q=document.getElementById('search').value.trim();document.querySelectorAll('.product').forEach(p=>p.style.display=p.dataset.name.includes(q)?'':'none')}
 function chooseCategory(c){toggleDrawer();toast('قسم '+c);document.getElementById('products').scrollIntoView({behavior:'smooth'})}
-function order(p){toast('سيتم تجهيز طلب '+p+' عبر واتساب')}
+function order(p){const message='مرحبًا، أريد الاستفسار عن المنتج: '+p+' من دار مرام ستور.';const url='https://wa.me/201119301092?text='+encodeURIComponent(message);window.open(url,'_blank','noopener,noreferrer')}
 </script></body></html>
