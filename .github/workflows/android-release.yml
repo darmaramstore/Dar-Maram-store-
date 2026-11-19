@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - ".github/workflows/android-release.yml"
+      - "android-app/**"
   workflow_dispatch:
 
 permissions:
