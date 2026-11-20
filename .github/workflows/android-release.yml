@@ -88,4 +88,4 @@ jobs:
         if: always()
         run: rm -f "$RUNNER_TEMP/dar-maram-upload-key.jks"
 
-# Build both a signed installable APK and the Play Store AAB on the review branch (latest storefront content).
+# Build both a signed installable APK and the Play Store AAB on the review branch (version 1.0.2).
