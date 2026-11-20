@@ -58,9 +58,9 @@ nav button{background:none;border:0;color:#f2dfc2;font-size:12px;display:grid;ga
 </div></section>
 <section class="section" id="products"><div class="sectionhead"><h2>أحدث المنتجات</h2><span>اختيارات دار مرام ♛</span></div>
 <div class="products" id="productGrid">
-<article class="product" data-name="إطلالة كاجوال زرقاء"><button class="fav" onclick="favorite(this)">♡</button><img src="https://darmaramstore.wordpress.com/wp-content/uploads/2026/11/dar-maram-blue-casual.jpg"><div class="info"><h3>بلوزة كاجوال أنيقة</h3><div class="price">السعر عند الطلب</div></div><button class="add" onclick="order('إطلالة كاجوال زرقاء')">اطلبي عبر واتساب</button></article>
-<article class="product" data-name="كارديجان مخطط كحلي وألوان متعددة"><button class="fav" onclick="favorite(this)">♡</button><img src="https://darmaramstore.wordpress.com/wp-content/uploads/2026/11/dar-maram-cardigan-rack.jpg"><div class="info"><h3>شال كاجوال فاخر</h3><div class="price">السعر عند الطلب</div></div><button class="add" onclick="order('كارديجان مخطط كحلي وألوان متعددة')">اطلبي عبر واتساب</button></article>
-<article class="product" data-name="طقم حريمي نبيتي أنيق"><button class="fav" onclick="favorite(this)">♡</button><img src="https://darmaramstore.wordpress.com/wp-content/uploads/2026/11/dar-maram-burgundy-set.jpg"><div class="info"><h3>عباية مطرزة راقية</h3><div class="price">السعر عند الطلب</div></div><button class="add" onclick="order('طقم حريمي نبيتي أنيق')">اطلبي عبر واتساب</button></article>
+<article class="product" data-category="الملابس الكاجوال" data-name="بلوزة كاجوال أنيقة"><button class="fav" onclick="favorite(this)">♡</button><img src="__PROD_CASUAL__"><div class="info"><h3>بلوزة كاجوال أنيقة</h3><div class="price">السعر عند الطلب</div></div><button class="add" onclick="order('بلوزة كاجوال أنيقة')">اطلبي عبر واتساب</button></article>
+<article class="product" data-category="الشيلان" data-name="شال كاجوال فاخر"><button class="fav" onclick="favorite(this)">♡</button><img src="__PROD_SHAWL__"><div class="info"><h3>شال كاجوال فاخر</h3><div class="price">السعر عند الطلب</div></div><button class="add" onclick="order('شال كاجوال فاخر')">اطلبي عبر واتساب</button></article>
+<article class="product" data-category="العبايات" data-name="عباية مطرزة راقية"><button class="fav" onclick="favorite(this)">♡</button><img src="__PROD_ABAYA__"><div class="info"><h3>عباية مطرزة راقية</h3><div class="price">السعر عند الطلب</div></div><button class="add" onclick="order('عباية مطرزة راقية')">اطلبي عبر واتساب</button></article>
 </div></section>
 <div class="features"><div><b>🚚</b>توصيل للطلبات</div><div><b>💵</b>الدفع عند الاستلام</div><div><b>📱</b>محفظة إلكترونية قريبًا</div><div><b>📍</b>شبرا مصر – القاهرة</div></div>
 <a class="whatsapp" href="https://wa.me/201119301092" target="_blank" aria-label="واتساب">☏</a>
@@ -72,7 +72,9 @@ nav button{background:none;border:0;color:#f2dfc2;font-size:12px;display:grid;ga
 function toggleDrawer(){document.getElementById('drawer').classList.toggle('open')}
 function toast(t){let e=document.getElementById('toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',1800)}
 function favorite(b){b.textContent=b.textContent==='♡'?'♥':'♡';b.style.color=b.textContent==='♥'?'#b12a28':'#111'}
-function filterProducts(){let q=document.getElementById('search').value.trim();document.querySelectorAll('.product').forEach(p=>p.style.display=p.dataset.name.includes(q)?'':'none')}
-function chooseCategory(c){toggleDrawer();toast('قسم '+c);document.getElementById('products').scrollIntoView({behavior:'smooth'})}
-function order(p){const message='مرحبًا، أريد الاستفسار عن المنتج: '+p+' من دار مرام ستور.';const url='https://wa.me/201119301092?text='+encodeURIComponent(message);window.open(url,'_blank','noopener,noreferrer')}
+let activeCategory='';
+function filterProducts(){const q=document.getElementById('search').value.trim().toLocaleLowerCase('ar');document.querySelectorAll('.product').forEach(p=>{const matchName=p.dataset.name.toLocaleLowerCase('ar').includes(q);const matchCategory=!activeCategory||p.dataset.category===activeCategory;p.style.display=matchName&&matchCategory?'':'none'})}
+function chooseCategory(c){activeCategory=c;toggleDrawer();filterProducts();document.getElementById('products').scrollIntoView({behavior:'smooth'});const visible=[...document.querySelectorAll('.product')].some(p=>p.style.display!=='none');toast(visible?'قسم '+c:'لا توجد منتجات مضافة في هذا القسم حتى الآن')}
+function order(p){const msg='مرحبًا، أريد الاستفسار وطلب المنتج: '+p+' من دار مرام ستور';window.open('https://wa.me/201119301092?text='+encodeURIComponent(msg),'_blank','noopener')}
+
 </script></body></html>
