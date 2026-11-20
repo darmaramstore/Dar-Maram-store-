@@ -1,9 +1,9 @@
-# Deploy Dar Maram Store static app to GitHub Pages
-name: Publish Dar Maram Store
+# Deploy Dar Maram Store website preview
+name: Publish Dar Maram Store Preview
 
 on:
   push:
-    branches: ["main"]
+    branches: ["dar-maram-website-from-scratch"]
   workflow_dispatch:
 
 permissions:
@@ -12,7 +12,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: "pages-preview"
   cancel-in-progress: false
 
 jobs:
@@ -24,18 +24,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-
       - name: Prepare GitHub Pages artifact
-        run: |
-          tar --dereference --hard-dereference --exclude=.git --exclude=.github --exclude=artifact.tar -cvf artifact.tar .
-
+        run: tar --dereference --hard-dereference --exclude=.git --exclude=.github --exclude=artifact.tar -cvf artifact.tar .
       - name: Upload GitHub Pages artifact
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: github-pages
           path: artifact.tar
           retention-days: 1
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346
