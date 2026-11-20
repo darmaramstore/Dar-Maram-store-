@@ -54,14 +54,27 @@ jobs:
           echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/dar-maram-upload-key.jks"
           test -s "$RUNNER_TEMP/dar-maram-upload-key.jks"
 
-      - name: Build signed Play Store AAB
+      - name: Build signed release APK and Play Store AAB
         working-directory: android-app
         env:
           ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/dar-maram-upload-key.jks
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: gradle bundleRelease
+        run: gradle assembleRelease bundleRelease
+
+      - name: Verify signed release APK
+        run: |
+          BUILD_TOOLS="$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)"
+          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs android-app/app/build/outputs/apk/release/app-release.apk
+
+      - name: Upload signed installable APK
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: dar-maram-store-signed-release-apk
+          path: android-app/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+          retention-days: 14
 
       - name: Upload signed AAB
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -75,4 +88,4 @@ jobs:
         if: always()
         run: rm -f "$RUNNER_TEMP/dar-maram-upload-key.jks"
 
-# Trigger a fresh signed-release validation after repository secret setup.
+# Build both a signed installable APK and the Play Store AAB on the review branch.
