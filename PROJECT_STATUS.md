@@ -1,33 +1,43 @@
-# Dar Maram Store — Project Status & Execution Plan
+# Dar Maram Store — Android Project Status
 
-Updated: 2026-11-16
+Updated: 2026-11-21
 
-## Verified project state
-- Brand/store: Dar Maram Store.
-- Business category in repository metadata: women's clothing.
-- Existing public storefront URL recorded in the repository: https://darmaramstore.wordpress.com
-- The repository's default branch is `main`.
-- The repository currently contains a single app archive, `dar-maram-app-public.zip` (126,129 bytes), plus placeholder files and GitHub Pages workflow files. The archive is binary and could not be inspected through the connected GitHub text-file interface.
-- No Android project source tree (Gradle files, app module, Kotlin/Java source, or Android manifest) is currently present as directly inspectable files in the repository.
-- Open GitHub issue #1 describes the requested outcome: turn the existing app design into a functional Android app, test/build it, and prepare APK/AAB release instructions.
-- Open GitHub issue #2 asks for working, real functionality rather than a plan alone.
+## Repository safety
+- Default branch: `main`.
+- `main` remains unchanged at `815c0efaab4b46af9d85c6c5127e36f75cac78a2`.
+- Android review work is isolated on `app-review/verified-release-20261121`.
+- This branch is one commit ahead of `preview/functionality-pass-20261120`; the only source change is release-workflow checksum reporting.
 
-## Current assessment
-The Android app is **not yet verified as buildable or release-ready**. The ZIP may contain the missing source/design, but it must be extracted and inspected before implementation can be responsibly changed. Do not claim a successful build, working checkout, or Play Store readiness until those are tested.
+## Verified Android build
+- Android source exists under `android-app/` with Gradle Kotlin build files, `AndroidManifest.xml`, and `MainActivity.kt`.
+- Package: `com.darmaram.store`; version name `1.0.2`; version code `3`; min SDK 23; target SDK 35.
+- The app launches its bundled `assets/index.html` directly in a WebView; there is no splash/intro screen.
+- Signed Release APK and Play Store AAB built successfully in GitHub Actions run [44899094384](https://github.com/darmaramstore/Dar-Maram-store-/actions/runs/44899094384).
+- The workflow verified the APK with Android `apksigner`, generated SHA-256 checksums for APK and AAB, uploaded both binaries and the checksum artifact, and removed the temporary signing key.
+- APK artifact: `dar-maram-store-signed-release-apk`.
+- AAB artifact: `dar-maram-store-play-release-aab`.
+- Checksum artifact: `dar-maram-store-release-checksums`.
+- APK SHA-256: `4ebee3b81a50a215eef6e5b030cff0654f4d8c725cdee39034ff36e6d54cfaa1`.
+- AAB SHA-256: `6e94edab36387aec523cda540580fd4ccae72643d2a54ca127c0027b1d3fc161`.
 
-## Execution sequence
-1. **Recover and inspect the archive**: extract `dar-maram-app-public.zip`; identify its framework, screens, assets, data model, and existing interactions.
-2. **Create a reproducible app project**: preserve the existing design and establish a clean project structure, dependencies, app identifier, versioning, and build instructions.
-3. **Make core shopping flows real**: product catalogue, product details, categories/search, cart, checkout/order submission, and contact/order support. Use a real configured backend or clearly documented store/WhatsApp handoff; never fake successful payment or order submission.
-4. **Configure store operations**: product data, sizes/variants, stock, EGP pricing, delivery zones/fees, returns policy, and customer support details must come from verified business data.
-5. **Test**: run static checks and build; test navigation, empty/error states, cart calculations, order submission, and Android device layouts.
-6. **Release preparation**: generate signed AAB/APK only after credentials and package identity are confirmed; document signing, privacy policy, data safety, screenshots, and Play Console requirements.
+## Store requirements currently present
+- Arabic RTL storefront styling using black, gold, and cream.
+- Store categories include casual women's clothing, hijab/scarves/bandanas, shawls, and abayas.
+- WhatsApp handoff link uses `201119301092`.
+- Store address is present: 119 شارع خلوصي، شبرا مصر، الساحل، القاهرة.
+- Cash on delivery is the only payment method shown.
+- No Shopify integration, medical/pharmacy content, or returns/exchanges section was found in the bundled storefront HTML.
 
-## Definition of done
-- App source is committed and reproducibly builds.
-- Main shopping and order flows work end-to-end against a real configured service.
-- No placeholder products, prices, policies, contact details, or fake transaction success remain.
-- Build/test evidence and release instructions are documented.
+## Remaining functional gaps
+- The product grid is deliberately empty with a message that approved products will be added later. No supplier-MS product photos or verified product-code catalogue were found in the Library files retrieved for this review; retrieved visual files were store mockups and screenshots.
+- The bottom navigation entries for favorites, cart, and account currently show informational toast messages; they are not a persistent favorites/cart/account implementation.
+- There is no configured product API, backend checkout, stock/price source, or end-to-end order submission. Do not represent the app as a complete ecommerce checkout yet.
+- The APK signing certificate is self-issued under Dar Maram Store, not a Google Play-issued certificate. The Actions signature check succeeded, but sideloaded installation may still trigger Play Protect warnings.
+- The AAB has not been uploaded to Google Play Console and the app has not been submitted to any store.
 
-## Immediate blocker
-The archive must be made available in an inspectable form (extracted source folder or individual source/assets). The GitHub connector can see the ZIP entry but cannot decode its binary contents. This is a tooling limitation, not evidence that the archive is empty or broken.
+## Next work
+1. Locate and import only the user's approved original product photos and verified product codes; do not substitute mockup imagery or invent product names/prices.
+2. Implement and test real cart and order handoff behavior using verified product data; do not claim an order or payment succeeded unless a real service confirms it.
+3. Test the Android app on devices and prepare Play Console declarations only after the app functionality and store data are complete.
+
+No public release, deployment, domain connection, or store submission has been performed.
