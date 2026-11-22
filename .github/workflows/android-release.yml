@@ -103,3 +103,4 @@ jobs:
 
 # Build signed APK and Play Store AAB; publish SHA-256 checksums with the review artifacts.
 # Trigger a signed release rebuild for the cart and WhatsApp review branch.
+# Rebuild after ensuring all external links use the WebView navigation handler.
