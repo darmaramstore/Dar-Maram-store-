@@ -181,7 +181,7 @@ function checkoutCart(){
  const lines=cartItems.map(item=>'- '+item.name+(item.code?' (كود '+item.code+')':'')+' × '+item.qty).join('\n');
  const msg='مرحبًا، أريد طلب المنتجات التالية من دار مرام ستور بنظام الدفع عند الاستلام:\n'+lines+'\nبرجاء تأكيد التوافر والسعر وتكلفة التوصيل.';
  const url='https://wa.me/201119301092?text='+encodeURIComponent(msg);
- window.open(url,'_blank','noopener');
+ window.location.href=url;
  toast('تم تجهيز تفاصيل الطلب لفتح واتساب؛ لم يُسجل الطلب قبل تأكيد المتجر');
 }
 function favorite(button){
@@ -219,8 +219,8 @@ function showFavorites(){
 }
 function showStoreInfo(){setActiveNav('navAccount');const e=document.getElementById('infoBackdrop');e.classList.add('open');e.setAttribute('aria-hidden','false')}
 function closeStoreInfo(event){if(event&&event.target&&event.target.id!=='infoBackdrop')return;const e=document.getElementById('infoBackdrop');e.classList.remove('open');e.setAttribute('aria-hidden','true')}
-function contactStore(){window.open('https://wa.me/201119301092','_blank','noopener')}
-function order(productName){const msg='مرحبًا، أريد الاستفسار عن المنتج: '+productName+' من دار مرام ستور. برجاء تأكيد التوافر والسعر.';window.open('https://wa.me/201119301092?text='+encodeURIComponent(msg),'_blank','noopener')}
+function contactStore(){window.location.href='https://wa.me/201119301092'}
+function order(productName){const msg='مرحبًا، أريد الاستفسار عن المنتج: '+productName+' من دار مرام ستور. برجاء تأكيد التوافر والسعر.';window.location.href='https://wa.me/201119301092?text='+encodeURIComponent(msg)}
 function initializeStoreApp(){syncProductCards();renderCart();filterProducts()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initializeStoreApp);else initializeStoreApp();
 
