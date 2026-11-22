@@ -102,3 +102,4 @@ jobs:
         run: rm -f "$RUNNER_TEMP/dar-maram-upload-key.jks"
 
 # Build signed APK and Play Store AAB; publish SHA-256 checksums with the review artifacts.
+# Trigger a signed release rebuild for the cart and WhatsApp review branch.
