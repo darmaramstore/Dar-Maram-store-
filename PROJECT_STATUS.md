@@ -44,3 +44,12 @@ Updated: 2026-11-22
 3. Perform device-level installation and navigation tests before any store submission.
 
 No public release, deployment, domain connection, or store submission has been performed.
+
+## Supplier catalog import pipeline — 2026-11-24
+- Added an empty supplier CSV template at `catalog/products.csv`; it contains the requested Arabic columns and no sample product rows.
+- Added `tools/import_catalog.py` to validate the exact CSV headings, required product name/code/section/image fields, unique product codes, approved store sections, and original image sources.
+- Local image names must resolve to actual files under `android-app/app/src/main/assets/products/`; remote image links must use HTTPS. Missing images, HTTP links, path traversal, duplicate codes, and unknown sections are rejected rather than replaced with placeholders.
+- Added automated tests for empty templates, valid local/HTTPS images, duplicate codes, missing images, HTTP links, unsafe paths, unknown sections, and idempotent storefront script injection.
+- Updated the signed Android review workflow to run the catalog tests and generate the storefront product-data script before building. The empty CSV keeps the product grid empty; no sample products or images are generated.
+- The new review branch commit containing the workflow and importer is `a6ddd8acd4072d351d6713cef767b7150dbeeb2c`. The current GitHub connector does not expose push-triggered workflow-run listings, so the result of this new build has not yet been independently confirmed here.
+- The previously verified signed APK remains from run [45017576031](https://github.com/darmaramstore/Dar-Maram-store-/actions/runs/45017576031), built from `6e57fdcd795c54abca43566e151ece860f89a836`; it predates the catalog-import pipeline and does not include that new build-time importer.
